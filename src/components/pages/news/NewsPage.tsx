@@ -13,18 +13,20 @@ import {
   MenuItem,
   DialogContent,
   DialogActions,
-  Pagination
+  Pagination,
+  Typography
 } from '@mui/material'
 import { useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import NewsItem from '@/components/pages/news/NewsItem'
 import { NewsInterface, NewsFormInterface } from '@/types/news'
 import { newsMock, categoriesMock } from '@/mock/data'
+import InboxIcon from '@mui/icons-material/Inbox'
 
 export default function NewsPage() {
   const categories = categoriesMock
 
-  const { register, handleSubmit, reset } = useForm<NewsFormInterface>()
+  const { register, handleSubmit, reset, control } = useForm<NewsFormInterface>()
 
   const [search, setSearch] = useState('')
   const [openModal, setOpenModal] = useState(false)
@@ -138,6 +140,19 @@ export default function NewsPage() {
         />
       ))}
 
+      {displayedNews.length === 0 && (
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          sx={{ mt: 5, color: 'text.secondary' }}
+        >
+          <InboxIcon color="primary" sx={{ fontSize: 50, mb: 1 }} />
+          <Typography variant="h6" color="primary">Aucune news à afficher</Typography>
+        </Box>
+      )}
+
       {pageCount > 1 && (
         <Stack alignItems="center" mt={2}>
           <Pagination
@@ -167,16 +182,28 @@ export default function NewsPage() {
               margin="dense"
               {...register('subtitle')}
             />
-            <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel>Catégorie</InputLabel>
-              <Select {...register('category')} defaultValue={categories[0]}>
-                {categories.map(cat => (
-                  <MenuItem key={cat} value={cat}>
-                    {cat}
-                  </MenuItem>
-                ))}
-              </Select>
+            <FormControl fullWidth sx={{ mt: 2 }} margin="dense">
+              <InputLabel id="category-label">Catégorie</InputLabel>
+              <Controller
+                name="category"
+                control={control}
+                defaultValue={categories[0]}
+                render={({ field }) => (
+                  <Select
+                    labelId="category-label"
+                    label="Catégorie"
+                    {...field}
+                  >
+                    {categories.map(cat => (
+                      <MenuItem key={cat} value={cat}>
+                        {cat}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
+              />
             </FormControl>
+
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseModal}>Annuler</Button>
@@ -188,7 +215,17 @@ export default function NewsPage() {
       </Dialog>
 
       <Dialog open={openDeleteModal} onClose={handleCloseDelete}>
-        <DialogTitle>Confirmer la suppression du news {selectedNews?.title}</DialogTitle>
+        <DialogTitle>Confirmer la suppression du news</DialogTitle>
+        <DialogContent>
+          <Typography
+            variant="h6"
+            align="center"
+            color="error"
+            sx={{ fontWeight: 'bold', mb: 1 }}
+          >
+            {selectedNews?.title}
+          </Typography>
+        </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDelete}>Annuler</Button>
           <Button onClick={handleConfirmDelete} variant="contained" color="error">
