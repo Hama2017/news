@@ -1,4 +1,8 @@
+'use client'
+
+import NewsPage from '@/components/pages/news/NewsPage'
+
 export default function News() {
 
-    return <div>Page news</div>
+    return <NewsPage /> ;
 }
