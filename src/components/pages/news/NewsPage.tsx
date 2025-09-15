@@ -39,7 +39,7 @@ export default function NewsPage() {
 
   const filteredNews = newsList.filter(n =>
     n.title.toLowerCase().includes(search.toLowerCase())
-  )
+  ).sort((a,b) => b.id - a.id)
 
 
   const pageCount = Math.ceil(filteredNews.length / itemsPerPage)
