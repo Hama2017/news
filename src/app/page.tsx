@@ -1,5 +1,5 @@
 
-export default function Home() {
+const Home = () => {
   return (
 
       <div>Page Index</div>
