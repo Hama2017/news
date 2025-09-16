@@ -1,12 +1,8 @@
-export interface NewsInterface {
+export interface News {
   id: number
   title: string
   subtitle: string
-  category: string 
+  category: string
 }
 
-export interface NewsFormInterface {
-  title: string
-  subtitle: string
-  category: string 
-}
+export type NewsInput = Omit<News, 'id'>;

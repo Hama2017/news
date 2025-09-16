@@ -3,18 +3,16 @@
 import { Box, Card, CardContent, Typography, Chip, Button } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useRouter } from 'next/navigation'
-import { NewsInterface } from '@/types/news'
+import { News } from '@/types/news'
 
 interface Props {
-  news: NewsInterface
+  news: News
 }
 
-export default function NewsDetailsPage({ news }: Props) {
+export default function NewsDetailsPage({ news: { id, title, subtitle, category } }: Props) {
   const router = useRouter()
 
-  const handleBack = () => {
-    router.push('/news')
-  }
+  const handleBack = () => router.back()
 
   return (
     <Box sx={{ maxWidth: 600, margin: 'auto', mt: 4 }}>
@@ -31,17 +29,17 @@ export default function NewsDetailsPage({ news }: Props) {
         <CardContent>
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
             <Typography variant="h5" fontWeight="bold">
-              {news.title}
+              {title}
             </Typography>
-            <Chip label={news.category} color="primary" />
+            <Chip label={category} color="primary" />
           </Box>
 
           <Typography variant="subtitle1" color="text.secondary" mb={2}>
-            {news.subtitle}
+            {subtitle}
           </Typography>
 
           <Typography variant="body2" color="text.disabled">
-            ID: {news.id}
+            ID: {id}
           </Typography>
         </CardContent>
       </Card>
