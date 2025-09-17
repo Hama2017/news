@@ -1,4 +1,6 @@
-export const newsMock = [
+import { News } from "@/types/news";
+
+export const newsMock : News [] = [
     {
       id: 1,
       title: 'La France gagne la coupe du monde',
@@ -56,4 +58,6 @@ export const newsMock = [
   ] 
 
 
-export const categoriesMock =  ['Sport', 'Politique', 'Tech', 'Économie']
+export const categoriesMock : string [] =  ['Sport', 'Politique', 'Tech', 'Économie']
+
+export const defaultCategoryMock : string = "Sport";

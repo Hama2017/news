@@ -1,8 +1,6 @@
 export interface News {
-  id: number
   title: string
   subtitle: string
   category: string
+  id?: number
 }
-
-export type NewsInput = Omit<News, 'id'>;
