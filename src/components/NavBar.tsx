@@ -1,9 +1,8 @@
 "use client";
 
-import Button from '@mui/material/Button';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation'; 
+import { usePathname } from 'next/navigation';
 
 const navLinks = [
     { text: 'Accueil', path: '/' },
@@ -11,17 +10,11 @@ const navLinks = [
     { text: 'Profil', path: '/profil' },
 ];
 
-export default function NavBar() {
+const NavBar = () => {
     const currentPathname = usePathname();
 
     return (
-        <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            gap={2}
-            component="nav"
-        >
+        <Box component="nav" sx={styles.nav}>
             {navLinks.map((link) => (
                 <Button
                     key={link.text}
@@ -34,4 +27,16 @@ export default function NavBar() {
             ))}
         </Box>
     );
-}
+};
+
+export default NavBar;
+
+const styles = {
+    nav: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 2,
+        mt: 2,
+    }
+};

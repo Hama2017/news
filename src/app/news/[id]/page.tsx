@@ -1,14 +1,12 @@
-import { NewsInterface } from '@/types/news'
-import { newsMock } from '@/mock/data'
-import NewsDetailsPage from '@/components/pages/news/NewsDetailsPage'
-import { notFound } from 'next/navigation'
+import NewsDetails from "@/app/news/[id]/components/NewsDetails"
 
-const mockNewsList: NewsInterface[] = newsMock
-
-export default async function NewsDetails({ params }: { params: { id: string } }) {
-  const foundNews = mockNewsList.find(n => n.id === Number(params.id))
-  if (!foundNews) {
-    notFound()
-  }
-  return <NewsDetailsPage news={foundNews} />
+interface Props {
+  params: { id: number }
 }
+export const NewsDetailsPage = ({ params }: Props) => {
+  const newsID = params.id
+  return (<></>)
+  //return <NewsDetails news={news} />
+}
+
+export default NewsDetailsPage;
