@@ -9,7 +9,6 @@ import NewsAddEditModal from "@/app/news/(dashboard)/components/NewsAddEditModal
 import NewsConfirmDeleteModal from "@/app/news/(dashboard)/components/NewsConfirmDeleteModal"
 import NewsItem from './components/NewsItem'
 import NewsHeaderBox from './components/NewsHeaderBox'
-import { fetchGetNews } from './helpers/fetchers/getNews'
 
 const NewsPage = () => {
 
@@ -24,8 +23,6 @@ const NewsPage = () => {
 
     return (
         <Box sx={styles.box}>
-
-            <Button onClick={() => fetchGetNews()}>fetch API</Button>
 
             <NewsHeaderBox
                 setModalFormMode={setModalFormMode}
