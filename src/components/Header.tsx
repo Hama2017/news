@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Typography } from '@mui/material';
-import NavBar from "@/app/components/NavBar";
+import NavBar from "@/components/NavBar";
 
 const Header = () => {
     return (

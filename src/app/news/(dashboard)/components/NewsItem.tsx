@@ -5,14 +5,19 @@ import EditIcon from '@mui/icons-material/ModeEdit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import Link from 'next/link'
 import { News } from '@/types/news'
+import { Dispatch, SetStateAction } from 'react'
+import { ModalFormMode } from '@/types/enums'
 
 interface Props {
-    news: News
-    onClickEdit: () => void
-    onClickDelete: () => void
+    news: News 
+    setNewsToEdit: Dispatch<SetStateAction<News | undefined>>,
+    setNewsToDelete: Dispatch<SetStateAction<News | undefined>>,
+    setModalFormMode: Dispatch<SetStateAction<ModalFormMode>>,
+    setOpenAddEditModal: Dispatch<SetStateAction<boolean>>
+    setOpenConfirmDeleteModal: Dispatch<SetStateAction<boolean>>
 }
 
-const NewsItem = ({ news, onClickEdit, onClickDelete }: Props) => {
+const NewsItem = ({ news, setNewsToEdit, setNewsToDelete, setModalFormMode, setOpenAddEditModal, setOpenConfirmDeleteModal }: Props) => {
     return (
         <Card variant="outlined" sx={{ mb: 2 }}>
             <CardContent>
@@ -35,10 +40,17 @@ const NewsItem = ({ news, onClickEdit, onClickDelete }: Props) => {
                     </Box>
 
                     <Stack direction="row" spacing={1}>
-                        <IconButton onClick={onClickEdit} aria-label="Modifier">
+                        <IconButton onClick={() => {
+                            setModalFormMode(ModalFormMode.EDIT);
+                            setNewsToEdit(news);
+                            setOpenAddEditModal(true);}
+                            } aria-label="Modifier">
                             <EditIcon />
                         </IconButton>
-                        <IconButton onClick={onClickDelete} color="error" aria-label="Supprimer">
+                        <IconButton onClick={() => {
+                             setNewsToDelete(news);
+                             setOpenConfirmDeleteModal(true);
+                        }} color="error" aria-label="Supprimer">
                             <DeleteIcon />
                         </IconButton>
                     </Stack>

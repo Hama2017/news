@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { News } from "@/types/news";
-import {generateID} from "@/app/news/helpers/utils/generateID"
+import {generateID} from "@/app/news/(dashboard)/helpers/utils/generateID"
 export const handleSaveItem = (
   savedNews: News,
   setItems: Dispatch<SetStateAction<News[]>>,

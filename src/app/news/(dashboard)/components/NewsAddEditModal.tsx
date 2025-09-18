@@ -17,14 +17,7 @@ interface Props {
     newsToEdit: News | undefined
 }
 
-const NewsModal = ({
-    open,
-    setOpen,
-    mode,
-    categories,
-    setItems,
-    newsToEdit
-}: Props) => {
+const NewsModal = ({ open, setOpen, mode, categories, setItems, newsToEdit }: Props) => {
 
     const initNews = { title: '', subtitle: '', id: 0, category: defaultCategory };
     const [news, setNews] = useState<News>(initNews)
