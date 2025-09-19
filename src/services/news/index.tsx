@@ -1,28 +1,27 @@
-
-
-const API_URL = "http://localhost:8000/api/"
+const API_URL = "http://localhost:8000/api";
 
 const get = async () => {
-
     try {
-
         const response = await fetch(`${API_URL}/news`, {
             method: "GET",
             headers: {
-                'content-type': 'Application/json',
-                // body: JSON.stringify
+                'Content-Type': 'application/json'
             }
         });
 
         const result = await response.json();
-        return { ok: response.ok, result: result }
 
-    } catch {
-        return { ok: false, result: { detail: "SERVER_ERROR"} }
+        if (!response.ok) {
+            return { ok: false, result: { detail: result.detail } };
+        }
+
+        return { ok: true, result: result.data };
+
+    } catch (error) {
+        return { ok: false, result: { detail: "SERVER_ERROR" } };
     }
-}
-
+};
 
 export const NewsService = {
     get
-}
+};

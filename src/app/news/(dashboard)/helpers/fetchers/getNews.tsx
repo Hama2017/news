@@ -1,18 +1,20 @@
 import { NewsService } from "@/services/news"
+import { News } from "@/types/news";
 
-export const fetchGetNews = async () => { 
+export const fetchGetNews = async () : Promise<News[]> => { 
 
     const { ok, result } = await NewsService.get();
 
+
     if (ok) {
-        // do something
+         console.log(result)
+        return result
     } else {
         
         const error = result.detail;
+        console.log(error.detail)
 
-        if (error === "SERVER_ERROR") {
-            // do something
-        }
+        return error
 
     }
 }

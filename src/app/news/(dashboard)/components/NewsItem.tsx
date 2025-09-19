@@ -5,8 +5,9 @@ import EditIcon from '@mui/icons-material/ModeEdit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import Link from 'next/link'
 import { News } from '@/types/news'
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { ModalFormMode } from '@/types/enums'
+import {fetchGetCategoryById} from "../helpers/fetchers/getCategoryById"
 
 interface Props {
     news: News 
@@ -17,13 +18,16 @@ interface Props {
     setOpenConfirmDeleteModal: Dispatch<SetStateAction<boolean>>
 }
 
+
 const NewsItem = ({ news, setNewsToEdit, setNewsToDelete, setModalFormMode, setOpenAddEditModal, setOpenConfirmDeleteModal }: Props) => {
+   
+
     return (
         <Card variant="outlined" sx={{ mb: 2 }}>
             <CardContent>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Box>
-                        <Chip label={news.category} color="primary" sx={{ mb: 1 }} />
+                        <Chip label={ news.category.label} color="primary" sx={{ mb: 1 }} />
                         <Typography variant="h6">{news.title}</Typography>
                         <Typography variant="body2" color="text.secondary">
                             {news.subtitle}
