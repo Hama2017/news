@@ -1,8 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Box, Typography, List, Button } from '@mui/material'
-import { categoriesMock as defaultCategories } from '@/mock/data'
+import { Box, Typography, List } from '@mui/material'
 import { News } from '@/types/news'
 import { ModalFormMode } from "@/types/enums"
 import NewsAddEditModal from "@/app/news/(dashboard)/components/NewsAddEditModal"
@@ -10,12 +9,12 @@ import NewsConfirmDeleteModal from "@/app/news/(dashboard)/components/NewsConfir
 import NewsItem from './components/NewsItem'
 import NewsHeaderBox from './components/NewsHeaderBox'
 import { fetchGetNews } from './helpers/fetchers/getNews'
-import { fetchGetCategories} from './helpers/fetchers/getCategories'
+import { fetchGetCategories } from './helpers/fetchers/getCategories'
 import { Category } from '@/types/category'
 
 const NewsPage = () => {
 
-    const [categories, setCategories] = useState<Category[] | undefined>(undefined)
+    const [categories, setCategories] = useState<Category[]>([])
     const [items, setItems] = useState<News[]>([])
     const [filteredItems, setFilteredItems] = useState<News[]>([])
     const [newsToEdit, setNewsToEdit] = useState<News | undefined>(undefined)
@@ -24,8 +23,8 @@ const NewsPage = () => {
     const [openConfirmDelteModal, setOpenConfirmDelteModal] = useState<boolean>(false)
     const [modalFormMode, setModalFormMode] = useState<ModalFormMode>(ModalFormMode.ADD)
 
-    useEffect(() => { fetchGetCategories().then(data => {setCategories(data)}) }, []);
-    useEffect(() => { fetchGetNews().then(data => {setItems(data)}) }, []);
+    useEffect(() => { fetchGetNews(setItems) }, []);
+    useEffect(() => { fetchGetCategories(setCategories) }, []);
 
     return (
         <Box sx={styles.box}>
@@ -33,15 +32,15 @@ const NewsPage = () => {
             <NewsHeaderBox
                 setModalFormMode={setModalFormMode}
                 setOpenAddEditModal={setOpenAddEditModal}
-                setFilteredItems = {setFilteredItems}
-                items={items} 
+                setFilteredItems={setFilteredItems}
+                items={items}
             />
 
             {items.length === 0 && (<Typography color="text.secondary" align="center">Aucune news pour le moment</Typography>)}
 
             <List>
                 {filteredItems.map((news: News) => (
-                <NewsItem key={news.id} news={news} setNewsToEdit={setNewsToEdit} setNewsToDelete={setNewsToDelete} setModalFormMode={setModalFormMode} setOpenAddEditModal={setOpenAddEditModal} setOpenConfirmDeleteModal={setOpenConfirmDelteModal} />
+                    <NewsItem key={news.id} news={news} setNewsToEdit={setNewsToEdit} setNewsToDelete={setNewsToDelete} setModalFormMode={setModalFormMode} setOpenAddEditModal={setOpenAddEditModal} setOpenConfirmDeleteModal={setOpenConfirmDelteModal} />
                 ))}
             </List>
 

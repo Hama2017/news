@@ -7,7 +7,6 @@ import Link from 'next/link'
 import { News } from '@/types/news'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { ModalFormMode } from '@/types/enums'
-import {fetchGetCategoryById} from "../helpers/fetchers/getCategoryById"
 
 interface Props {
     news: News 

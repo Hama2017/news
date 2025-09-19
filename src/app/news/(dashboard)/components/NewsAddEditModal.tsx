@@ -3,12 +3,11 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
 import { ModalFormMode } from '@/types/enums'
-import { defaultCategoryMock as defaultCategory } from '@/mock/data'
 import { handleSaveItem } from '../helpers/handlers/handleSaveItem'
 import { handleUpdateItem } from '../helpers/handlers/handleUpdateItem'
 import { News } from '@/types/news'
 import { Category } from '@/types/category'
-import { Label } from '@mui/icons-material'
+import { handleChangeCategory } from '../helpers/handlers/handleChangeCategory'
 
 interface Props {
     open: boolean
@@ -21,13 +20,12 @@ interface Props {
 
 const NewsModal = ({ open, setOpen, mode, categories, setItems, newsToEdit }: Props) => {
 
-    const initNews = { title: '', subtitle: '', id: 0, category_id: 0, category:{id:0,label:""} };
+    const initNews = { title: '', subtitle: '', id: 0, category: (categories && categories.length > 0) ? categories[0] : { id: 0, label: "" } };
     const [news, setNews] = useState<News>(initNews)
 
-    useEffect(() => { if (newsToEdit && mode === ModalFormMode.EDIT) setNews(newsToEdit)  
-         console.log(news.category_id)}, [mode, newsToEdit])
+    useEffect(() => { if (newsToEdit && mode === ModalFormMode.EDIT) setNews(newsToEdit) }, [mode, newsToEdit])
     useEffect(() => { if (open && mode === ModalFormMode.ADD) setNews(initNews) }, [open, mode]);
-   
+
     return (
         <Dialog open={open} onClose={() => setOpen(false)}>
             <DialogTitle>{mode === ModalFormMode.ADD ? "Ajouter" : "Modifier"} une News</DialogTitle>
@@ -50,9 +48,9 @@ const NewsModal = ({ open, setOpen, mode, categories, setItems, newsToEdit }: Pr
                     <InputLabel id="category-label">Catégorie</InputLabel>
                     <Select
                         labelId="category-label"
-                        value={news.category_id}
+                        value={news.category.id}
                         label="Catégorie"
-                        onChange={e => setNews((prev) => ({ ...prev, idCategory: e.target.value }))}
+                        onChange={e => handleChangeCategory(setNews, e.target.value, categories)}
                     >
                         {categories && categories.map(c => (
                             <MenuItem key={c.id} value={c.id}>{c.label}</MenuItem>

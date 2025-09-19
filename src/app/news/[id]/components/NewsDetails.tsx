@@ -33,7 +33,7 @@ const NewsDetails = ({ news } : Props) => {
             <Typography variant="h5" fontWeight="bold">
               {news.title}
             </Typography>
-            <Chip label={news.category} color="primary" />
+            <Chip label={news.category.label} color="primary" />
           </Box>
 
           <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 2 }}>
