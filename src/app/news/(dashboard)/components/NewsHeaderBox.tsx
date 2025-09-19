@@ -8,15 +8,15 @@ interface Props {
     setModalFormMode: Dispatch<SetStateAction<ModalFormMode>>
     setOpenAddEditModal: Dispatch<SetStateAction<boolean>>
     setFilteredItems : Dispatch<SetStateAction<News[]>>
+    setCurrentPage : Dispatch<SetStateAction<number>>
     items:News[]
 }
 
-const NewsHeaderBox = ({ setModalFormMode, setOpenAddEditModal, items, setFilteredItems }: Props) => {
+const NewsHeaderBox = ({ setModalFormMode, setOpenAddEditModal, items, setFilteredItems, setCurrentPage }: Props) => {
 
     const [searchField, setSearchField] = useState<string>('')
 
-    useEffect(() => { setFilteredItems(items) }, [items])
-    useEffect(() => { handleSearch(items, setFilteredItems,searchField) }, [searchField])
+    useEffect(() => { handleSearch(items, setFilteredItems,searchField),setCurrentPage(1) }, [searchField])
 
 
     return (

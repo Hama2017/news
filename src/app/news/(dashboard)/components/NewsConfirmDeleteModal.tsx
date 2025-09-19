@@ -12,7 +12,7 @@ interface Props {
     newsToDelete: News | undefined
 }
 
-const NewsConfirmDeleteModal = ({ open, setOpen, setItems, newsToDelete }: Props) => {
+const NewsConfirmDeleteModal = ({ open, setOpen, setItems, newsToDelete}: Props) => {
 
     if (!newsToDelete) return null
 

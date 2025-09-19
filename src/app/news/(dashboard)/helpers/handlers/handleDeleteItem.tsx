@@ -16,7 +16,6 @@ export const handleDeleteItem = async (
     if (ok) {
       setItems((prev) => prev.filter(item => item.id !== deletedNews.id));
       setOpen(false)
-      console.log("Ok", result);
     } else {
       console.error("Error :", result.detail);
     }
