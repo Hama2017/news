@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,223 +12,215 @@ import {
   Paper,
   Alert,
 } from "@mui/material";
+
 import CloseIcon from "@mui/icons-material/Close";
-
-interface Borne {
-  borne_id: number;
-  borne_name: string;
-  is_associated: boolean;
-}
-
+import { PedestalPark, PedestalsInPark } from "../interfaces";
+import { fetchPedestalsInPark } from "../helpers/fetchers/getPedestalsInPark";
+import {handleUpdatePedestalPark} from "../helpers/handlers/updatePedestalPark"
+import { handleToggleSelectedPedestal } from "../helpers/handlers/getToggleSelectedPedestal";
 interface Props {
-  open: boolean;
-  onClose: () => void;
-  onSave?: (data: { technicien: string; bornes: number[] }) => void;
-  bornesData: Borne[]; // maintenant on reçoit les bornes comme props
+  openModalEditPedestalPark: boolean
+  setOpenModalEditPedestalPark:Dispatch<SetStateAction<boolean>>,
+  selectedPedestalPark: PedestalPark | undefined
 }
 
-type Status = "idle" | "loading" | "success" | "error";
+const ModalEditPedestalPark = ({ openModalEditPedestalPark, setOpenModalEditPedestalPark, selectedPedestalPark}: Props) => {
 
-export default function ModifierModal({ open, onClose, onSave, bornesData }: Props) {
-  const [technicien, setTechnicien] = useState<string>("");
+  if (!selectedPedestalPark) return null
+
+  const [pedestalsInPark, setPedestalsInPark] = useState<PedestalsInPark[]>([]);
+  const [selectedPedestals, setSelectedPedestals] = useState<number[]>([]);
+  const [technician, setTechnician] = useState<string>("");
   const [error, setError] = useState<boolean>(false);
-  const [selectedBornes, setSelectedBornes] = useState<number[]>([]);
-  const [status, setStatus] = useState<Status>("idle");
 
-  // Initialisation des bornes sélectionnées si is_associated === true
+  useEffect(() => {setTechnician(selectedPedestalPark.technician)}, [selectedPedestalPark]);
+
+  useEffect(() => {fetchPedestalsInPark(selectedPedestalPark.park_id,setPedestalsInPark)}, [selectedPedestalPark]);
+
   useEffect(() => {
-    if (bornesData) {
-      const preSelected = bornesData
-        .filter((b) => b.is_associated)
-        .map((b) => b.borne_id);
-      setSelectedBornes(preSelected);
-    }
-  }, [bornesData, open]); // se réinitialise à l'ouverture du modal
+      const preSelectedPedestals = pedestalsInPark.filter((p) => p.is_associated).map((p) => p.borne_id);
+      setSelectedPedestals(preSelectedPedestals);
+  }, [pedestalsInPark]);
 
-  const handleToggle = (borne_id: number) => {
-    setSelectedBornes((prev) =>
-      prev.includes(borne_id) ? prev.filter((id) => id !== borne_id) : [...prev, borne_id]
-    );
-  };
-
-  const handleSave = async () => {
-    if (!technicien.trim()) {
-      setError(true);
-      return;
-    }
-    setError(false);
-    setStatus("loading");
-
-    setTimeout(() => {
-      setStatus("success");
-      onSave?.({ technicien, bornes: selectedBornes }); // retourne seulement les borne_id
-      setTimeout(() => {
-        setStatus("idle");
-        onClose();
-      }, 900);
-    }, 700);
-  };
 
   return (
     <Dialog
-      open={open}
-      onClose={onClose}
+      open={openModalEditPedestalPark}
       fullWidth
       maxWidth="lg"
-      PaperProps={{
-        sx: {
-          borderRadius: 3,
-          overflow: "hidden",
-        },
-      }}
     >
-      <DialogContent sx={{ p: 2 }}>
+      <DialogContent sx={styles.dialogContent}>
         {/* Ligne du haut : Fermer + X */}
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+        <Box sx={styles.closeContainer}>
           <Typography
             variant="body2"
-            onClick={onClose}
-            sx={{ mr: 1, cursor: "pointer", color: "text.secondary" }}
+            onClick={()=>setOpenModalEditPedestalPark(false)}
+            sx={styles.closeText}
           >
             Fermer
           </Typography>
-          <IconButton size="small" onClick={onClose}>
+          <IconButton size="small" onClick={()=>setOpenModalEditPedestalPark(false)}>
             <CloseIcon />
           </IconButton>
         </Box>
 
         {/* Ligne 2 colonnes 50/50 */}
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 2,
-            alignItems: "start",
-            mb: 2,
-          }}
-        >
+        <Box sx={styles.twoColumns}>
           {/* Colonne gauche */}
           <Box>
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              Sélectionnez les bornes que vous souhaitez associer au parc :{" "}
-              <b>Quai des croisades</b>
+            <Typography variant="body1" sx={styles.label}>
+              Sélectionnez les bornes que vous souhaitez associer au parc :
+              <b>{selectedPedestalPark.park_name}</b>
             </Typography>
 
             <TextField
-              label="Technicien"
+              label="Technician"
               fullWidth
-              value={technicien}
-              onChange={(e) => setTechnicien(e.target.value)}
+              value={technician}
+              onChange={(e) => setTechnician(e.target.value)}
               error={error}
-              helperText={error ? "Renseignez le nom du technicien" : ""}
+              helperText={error ? "Renseignez le nom du Technician" : ""}
+              inputRef={input => input && input.focus()}
             />
           </Box>
 
           {/* Colonne droite */}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "flex-start",
-              justifyContent: "flex-end",
-            }}
-          >
+          <Box sx={styles.rightColumn}>
             <Button
               variant="contained"
-              onClick={handleSave}
-              disabled={status === "loading"}
-              sx={{
-                borderRadius: "999px",
-                textTransform: "none",
-                px: 3,
-                py: 1,
-              }}
+              onClick={()=>{handleUpdatePedestalPark(selectedPedestalPark.park_id,technician, selectedPedestals,setError)}}
+              onKeyDown={e => e.key === 'Enter' ? alert("de"): ''}
+              sx={styles.saveButton}
             >
-              {status === "loading"
-                ? "Patientez..."
-                : status === "success"
-                ? "Enregistré"
-                : status === "error"
-                ? "Non enregistré"
-                : "Enregistrer"}
+              Enregistrer
             </Button>
           </Box>
         </Box>
 
         {/* Nombre bornes */}
-        <Typography variant="subtitle2" sx={{ mb: 1 }}>
-          {selectedBornes.length} bornes sélectionnées
+        <Typography variant="subtitle2" sx={styles.counter}>
+          {selectedPedestals.length} bornes sélectionnées
         </Typography>
 
         {/* Conteneur scrollable */}
-        <Box
-          sx={{
-            border: "1px solid #E0E0E0",
-            borderRadius: 2,
-            p: 2,
-            maxHeight: 360,
-            overflowY: "hidden",
-            overflowX: "hidden",
-            backgroundColor: "white",
-            mb: 1,
-            "&:hover": {
-              overflowY: "scroll",
-            },
-            "&::-webkit-scrollbar": {
-              width: "10px",
-              WebkitAppearance: "none",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "#9e9e9e",
-              borderRadius: "4px",
-            },
-            "&::-webkit-scrollbar-track": {
-              backgroundColor: "#f1f1f1",
-            },
-            scrollbarWidth: "thin",
-            scrollbarColor: "#9e9e9e #f1f1f1",
-          }}
-        >
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            {bornesData.map((borne) => {
-              const checked = selectedBornes.includes(borne.borne_id);
+        <Box sx={styles.scrollContainer}>
+          <Box sx={styles.itemsContainer}>
+            {pedestalsInPark.map((pedestal) => {
+              const checked = selectedPedestals.includes(pedestal.borne_id);
               return (
                 <Paper
-                  key={borne.borne_id}
+                  key={pedestal.borne_id}
                   elevation={0}
-                  onClick={() => handleToggle(borne.borne_id)}
+                  onClick={() => handleToggleSelectedPedestal(pedestal.borne_id,setSelectedPedestals,selectedPedestals)}
                   sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    p: 1.25,
-                    borderRadius: 2,
-                    border: "1px solid #DDD",
-                    cursor: "pointer",
+                    ...styles.borneItem,
                     backgroundColor: checked ? "#E3F2FD" : "transparent",
-                    "&:hover": {
-                      backgroundColor: "#F5F5F5",
-                    },
                   }}
                 >
                   <Checkbox
                     checked={checked}
-                    onChange={() => handleToggle(borne.borne_id)}
-                    sx={{ pointerEvents: "none" }}
+                    onChange={() => handleToggleSelectedPedestal(pedestal.borne_id,setSelectedPedestals,selectedPedestals)}
+                    sx={styles.checkbox}
                   />
-                  <Typography variant="body2">{borne.borne_name}</Typography>
+                  <Typography variant="body2">{pedestal.borne_name}</Typography>
                 </Paper>
               );
             })}
           </Box>
         </Box>
-
-        {/* Messages */}
-        {status === "success" && (
-          <Alert severity="success">Données enregistrées avec succès !</Alert>
-        )}
-        {status === "error" && (
-          <Alert severity="error">Erreur lors de l'enregistrement</Alert>
-        )}
       </DialogContent>
     </Dialog>
   );
 }
+
+// Styles externalisés
+const styles = {
+  dialog: {
+    borderRadius: 3,
+    overflow: "hidden",
+  },
+  dialogContent: {
+    p: 2,
+  },
+  closeContainer: {
+    display: "flex",
+    justifyContent: "flex-end",
+    mb: 2,
+  },
+  closeText: {
+    mr: 1,
+    cursor: "pointer",
+    color: "text.secondary",
+  },
+  twoColumns: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 2,
+    alignItems: "start",
+    mb: 2,
+  },
+  label: {
+    mb: 1,
+  },
+  rightColumn: {
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "flex-end",
+  },
+  saveButton: {
+    borderRadius: "999px",
+    textTransform: "none",
+    px: 3,
+    py: 1,
+  },
+  counter: {
+    mb: 1,
+  },
+  scrollContainer: {
+    border: "1px solid #E0E0E0",
+    borderRadius: 2,
+    p: 2,
+    maxHeight: 360,
+    overflowY: "hidden",
+    overflowX: "hidden",
+    backgroundColor: "white",
+    mb: 1,
+    "&:hover": {
+      overflowY: "scroll",
+    },
+    "&::-webkit-scrollbar": {
+      width: "10px",
+      WebkitAppearance: "none",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      backgroundColor: "#9e9e9e",
+      borderRadius: "4px",
+    },
+    "&::-webkit-scrollbar-track": {
+      backgroundColor: "#f1f1f1",
+    },
+    scrollbarWidth: "thin",
+    scrollbarColor: "#9e9e9e #f1f1f1",
+  },
+  itemsContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 1,
+  },
+  borneItem: {
+    display: "flex",
+    alignItems: "center",
+    p: 1.25,
+    borderRadius: 2,
+    border: "1px solid #DDD",
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "#F5F5F5",
+    },
+  },
+  checkbox: {
+    pointerEvents: "none",
+  },
+};
+
+export default ModalEditPedestalPark; 
